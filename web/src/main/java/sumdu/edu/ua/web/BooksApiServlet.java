@@ -4,10 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sumdu.edu.ua.config.Beans;
 import sumdu.edu.ua.core.domain.Book;
 import sumdu.edu.ua.core.domain.PageRequest;
 import sumdu.edu.ua.core.port.CatalogRepositoryPort;
-import sumdu.edu.ua.persistence.jdbc.JdbcBookRepository;
+
 
 import java.io.IOException;
 
@@ -16,7 +17,7 @@ public class BooksApiServlet extends HttpServlet {
 
     private static final Logger log = LoggerFactory.getLogger(BooksApiServlet.class);
 
-    private final CatalogRepositoryPort bookRepo = new JdbcBookRepository();
+    private final CatalogRepositoryPort bookRepo = Beans.getBookRepo();
     private final ObjectMapper om = new ObjectMapper();
 
     @Override
