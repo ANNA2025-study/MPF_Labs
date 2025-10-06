@@ -1,8 +1,11 @@
 package sumdu.edu.ua.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import sumdu.edu.ua.config.Beans;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import sumdu.edu.ua.core.domain.Book;
 import sumdu.edu.ua.core.domain.PageRequest;
 import sumdu.edu.ua.core.port.CatalogRepositoryPort;
@@ -10,11 +13,15 @@ import sumdu.edu.ua.core.port.CatalogRepositoryPort;
 import java.io.IOException;
 import java.util.List;
 
+
 public class BooksServlet extends HttpServlet {
 
-    //private final JdbcBookRepository bookRepo = new JdbcBookRepository();
+    private final CatalogRepositoryPort bookRepo;
 
-    private final CatalogRepositoryPort bookRepo = Beans.getBookRepo();
+    public BooksServlet(CatalogRepositoryPort bookRepo) {
+        this.bookRepo = bookRepo;
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {

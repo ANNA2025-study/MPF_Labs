@@ -1,10 +1,12 @@
 package sumdu.edu.ua.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sumdu.edu.ua.config.Beans;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import sumdu.edu.ua.core.domain.Book;
 import sumdu.edu.ua.core.domain.PageRequest;
 import sumdu.edu.ua.core.port.CatalogRepositoryPort;
@@ -17,8 +19,15 @@ public class BooksApiServlet extends HttpServlet {
 
     private static final Logger log = LoggerFactory.getLogger(BooksApiServlet.class);
 
-    private final CatalogRepositoryPort bookRepo = Beans.getBookRepo();
-    private final ObjectMapper om = new ObjectMapper();
+    private final CatalogRepositoryPort bookRepo;
+
+    private final ObjectMapper om;
+
+    public BooksApiServlet(CatalogRepositoryPort bookRepo, ObjectMapper om) {
+        this.bookRepo = bookRepo;
+        this.om = om;
+    }
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
