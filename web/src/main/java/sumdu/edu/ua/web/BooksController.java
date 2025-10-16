@@ -1,17 +1,15 @@
 package sumdu.edu.ua.web;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import sumdu.edu.ua.core.domain.Book;
 import sumdu.edu.ua.core.domain.PageRequest;
 import sumdu.edu.ua.core.port.CatalogRepositoryPort;
 
 import java.util.List;
 
-
-@RestController
+@Controller
 @RequestMapping("/books")
 public class BooksController {
 
@@ -21,15 +19,18 @@ public class BooksController {
         this.bookRepo = bookRepo;
     }
 
-
-        @GetMapping
-        public List<Book> getAllBooks() {
-            return bookRepo.search(null, new PageRequest(0, 20)).getItems();
-        }
-
-        @GetMapping("/{id}")
-        public Book getBook(@PathVariable long id) {
-            return bookRepo.findById(id);
-        }
+    @GetMapping
+    public String getAllBooks(Model model) {
+        List<Book> books = bookRepo.search(null, new PageRequest(0, 20)).getItems();
+        model.addAttribute("books", books);
+        return "books";
     }
 
+
+    @GetMapping("books/{id}")
+    public String getBook(@PathVariable long id, Model model) {
+        Book book = bookRepo.findById(id);
+        model.addAttribute("book", book);
+        return "book-comments";
+    }
+}

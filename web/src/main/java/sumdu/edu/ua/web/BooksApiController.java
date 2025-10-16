@@ -10,6 +10,7 @@ import sumdu.edu.ua.core.domain.Page;
 import sumdu.edu.ua.core.domain.PageRequest;
 import sumdu.edu.ua.core.port.CatalogRepositoryPort;
 
+
 @RestController
 @RequestMapping("/api/books")
 public class BooksApiController {
@@ -22,7 +23,7 @@ public class BooksApiController {
         this.bookRepo = bookRepo;
     }
 
-    // === GET /api/books ===
+
     @GetMapping
     public ResponseEntity<Page<Book>> getBooks(
             @RequestParam(required = false) String q,
@@ -33,13 +34,11 @@ public class BooksApiController {
             Page<Book> result = bookRepo.search(q, new PageRequest(page, size));
             return ResponseEntity.ok(result);
         } catch (Exception e) {
-            log.error("DB error while GET /api/books", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
+            log.error("Помилка доступу до БД при виконанні GET /api/books", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    // === POST /api/books ===
     @PostMapping
     public ResponseEntity<?> addBook(@RequestBody Book book) {
         try {
@@ -60,7 +59,7 @@ public class BooksApiController {
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
 
         } catch (Exception e) {
-            log.error("DB error while POST /api/books", e);
+            log.error("Помилка доступу до БД при виконанні POST /api/books", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("DB error");
         }
