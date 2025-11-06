@@ -35,7 +35,9 @@ public class BooksServlet extends HttpServlet {
             req.getRequestDispatcher("/WEB-INF/views/books.jsp").forward(req, resp);
 
         } catch (Exception e) {
-            throw new ServletException("Cannot load books", e);
+            //throw new ServletException("Cannot load books", e);
+            req.setAttribute("books", List.of());
+            req.getRequestDispatcher("/WEB-INF/views/books.jsp").forward(req, resp);
         }
     }
 }
