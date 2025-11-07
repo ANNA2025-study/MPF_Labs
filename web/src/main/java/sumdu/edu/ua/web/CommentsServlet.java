@@ -4,21 +4,21 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import sumdu.edu.ua.config.Beans;
 import sumdu.edu.ua.core.domain.Book;
 import sumdu.edu.ua.core.domain.Comment;
 import sumdu.edu.ua.core.domain.PageRequest;
 import sumdu.edu.ua.core.port.CatalogRepositoryPort;
 import sumdu.edu.ua.core.port.CommentRepositoryPort;
-import sumdu.edu.ua.persistence.jdbc.JdbcBookRepository;
-import sumdu.edu.ua.persistence.jdbc.JdbcCommentRepository;
+
 
 import java.io.IOException;
 import java.util.List;
 
 public class CommentsServlet extends HttpServlet {
 
-    private final CatalogRepositoryPort bookRepo = new JdbcBookRepository();
-    private final CommentRepositoryPort commentRepo = new JdbcCommentRepository();
+    private final CatalogRepositoryPort bookRepo = Beans.getBookRepo();//new JdbcBookRepository();
+    private final CommentRepositoryPort commentRepo = Beans.getCommentRepo();//new JdbcCommentRepository();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
