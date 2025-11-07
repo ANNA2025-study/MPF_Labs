@@ -1,9 +1,11 @@
 package sumdu.edu.ua.persistence.jdbc;
 
+import org.springframework.stereotype.Component;
+
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.Statement;
-
+@Component
 public final class DbInit {
 
     private DbInit() {}
