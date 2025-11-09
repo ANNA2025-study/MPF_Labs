@@ -16,23 +16,11 @@
 
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
-        <javalin.version>6.2.0</javalin.version>
-        <jetty.version>12.0.5</jetty.version>
+        <javalin.version>5.6.3</javalin.version>
+        <jetty.version>11.0.17</jetty.version>
         <jackson.version>2.17.2</jackson.version>
         <slf4j.version>2.0.13</slf4j.version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-bom</artifactId>
-                <version>${jetty.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <!-- core + persistence -->
@@ -47,12 +35,15 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- стабільна зв’язка Javalin + Jetty -->
+        <!-- Javalin 5 -->
         <dependency>
             <groupId>io.javalin</groupId>
             <artifactId>javalin</artifactId>
-            <version>${javalin.version}</version>
+            <version>6.2.0</version>
+            <type>jar</type>
         </dependency>
+
+        <!-- Jetty 11 -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
@@ -62,14 +53,19 @@
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>6.0.0</version>
-            <scope>compile</scope>
+            <version>5.0.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.version}</version>
         </dependency>
 
@@ -87,8 +83,17 @@
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
+    
 
     <build>
+         <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

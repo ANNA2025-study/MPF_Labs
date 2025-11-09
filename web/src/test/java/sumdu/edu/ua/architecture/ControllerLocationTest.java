@@ -13,7 +13,7 @@ public class ControllerLocationTest {
                 .importPackages("sumdu.edu.ua");
 
         classes()
-                .that().haveSimpleNameEndingWith("Servlet")
+                .that().haveSimpleNameEndingWith("Controller")
                 .should().resideInAPackage("..web..")
                 .check(imported);
     }

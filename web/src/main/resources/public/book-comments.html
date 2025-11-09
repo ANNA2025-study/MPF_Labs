@@ -1,24 +1,85 @@
 <!doctype html>
+<html lang="uk">
 <meta charset="utf-8">
-<title>Каталог книг</title>
-<h1>Каталог книг</h1>
-<ul id="book-list"></ul>
+<title>Коментарі до книги</title>
+<h1>Коментарі</h1>
+
+<div id="book-info"></div>
+<ul id="comments-list"></ul>
+
+<form id="comment-form">
+    <input type="hidden" name="bookId" id="bookId">
+    <p><input name="author" placeholder="Ваше ім'я" required></p>
+    <p><textarea name="text" placeholder="Текст коментаря" required></textarea></p>
+    <p><button type="submit">Додати коментар</button></p>
+</form>
 
 <script>
-    async function loadBooks() {
-        const res = await fetch('/api/books');
-        const books = await res.json();
-        const ul = document.getElementById('book-list');
-        ul.innerHTML = '';
-        if (!books.length) {
-            ul.innerHTML = '<li>Каталог порожній</li>';
-            return;
-        }
-        for (const b of books) {
-            const li = document.createElement('li');
-            li.innerHTML = `<a href="comments.html?bookId=${b.id}">${b.title}</a> — ${b.author} (${b.pubYear})`;
-            ul.appendChild(li);
-        }
+async function loadComments() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookId = urlParams.get("bookId");
+    if (!bookId) {
+        document.body.innerHTML = "<p style='color:red'>Відсутній bookId у URL</p>";
+        return;
     }
-    loadBooks();
+
+    document.getElementById("bookId").value = bookId;
+
+    try {
+        const res = await fetch(`/api/comments?bookId=${bookId}`);
+        if (!res.ok) throw new Error("Не вдалося завантажити коментарі");
+        const data = await res.json();
+
+        const book = data.book;
+        const comments = data.comments || [];
+
+        document.getElementById("book-info").innerHTML =
+            `<h2>${book.title}</h2><p>${book.author} (${book.pubYear})</p>`;
+
+        const ul = document.getElementById("comments-list");
+        ul.innerHTML = "";
+
+        if (comments.length === 0) {
+            ul.innerHTML = "<li>Коментарів поки немає</li>";
+        } else {
+            for (const c of comments) {
+                const li = document.createElement("li");
+                li.innerHTML = `<b>${c.author}:</b> ${c.text}`;
+                ul.appendChild(li);
+            }
+        }
+
+    } catch (err) {
+        document.body.innerHTML = `<p style="color:red">Помилка: ${err.message}</p>`;
+    }
+}
+
+const urlParams = new URLSearchParams(window.location.search);
+const bookId = urlParams.get("bookId");
+if (!bookId) {
+    document.body.innerHTML = "<p style='color:red'>Відсутній bookId у URL</p>";
+} else {
+    document.getElementById("bookId").value = bookId;
+    loadComments();
+}
+
+document.getElementById("comment-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    try {
+        const res = await fetch("/api/comments", { method: "POST", body: formData });
+        if (!res.ok) {
+            const msg = await res.text();
+            throw new Error(msg);
+        }
+        form.reset();
+        await loadComments(); // після успішного додавання
+    } catch (err) {
+        alert("Помилка: " + err.message);
+    }
+});
+
+loadComments();
 </script>
+</html>

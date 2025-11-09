@@ -20,45 +20,66 @@ public class CommentsController {
 
     public void registerRoutes(Javalin app) {
 
-        // --- список коментарів до книги ---
-        app.get("/comments", this::listComments);
+        // --- REST API ---
+        app.get("/api/comments", this::getComments);
+        app.post("/api/comments", this::addComment);
+        app.delete("/api/comments/{commentId}", this::deleteComment);
 
-        // --- додати коментар ---
-        app.post("/comments", this::addComment);
-
-        // --- видалити коментар ---
-        app.post("/comments/delete", this::deleteComment);
+        // --- сторінка з фронтом ---
+        app.get("/comments", ctx -> ctx.redirect("/book-comments.html"));
     }
 
-    private void listComments(Context ctx) {
-        long bookId = ctx.queryParamAsClass("bookId", Long.class).get();
+    /**
+     * Повертає JSON зі списком коментарів до книги
+     */
+    private void getComments(Context ctx) {
+        Long bookId = ctx.queryParamAsClass("bookId", Long.class).getOrDefault(null);
+        if (bookId == null) {
+            ctx.status(400).result("Missing bookId");
+            return;
+        }
+
         var book = bookRepo.findById(bookId);
         var comments = commentRepo.list(bookId, null, null, new PageRequest(0, 20)).getItems();
 
-        ctx.render("book-comments.mustache", Map.of(
+        ctx.json(Map.of(
                 "book", book,
                 "comments", comments
         ));
     }
 
+    /**
+     * Додає коментар (через POST /api/comments)
+     */
     private void addComment(Context ctx) {
-        long bookId = ctx.formParamAsClass("bookId", Long.class).get();
+        Long bookId = ctx.formParamAsClass("bookId", Long.class).getOrDefault(null);
         String author = ctx.formParam("author");
         String text = ctx.formParam("text");
 
-        if (author == null || text == null || author.isBlank() || text.isBlank()) {
-            ctx.status(400).result("author and text required");
+        if (bookId == null || author == null || text == null ||
+                author.isBlank() || text.isBlank()) {
+            ctx.status(400).result("bookId, author and text required");
+            return;
+        }
+        System.out.println("Adding comment to bookId = " + bookId + " by " + author);
+
+        commentRepo.add(bookId, author.trim(), text.trim());
+        ctx.status(201).json(Map.of("status", "ok"));
+    }
+
+    /**
+     * Видаляє коментар (через DELETE /api/comments/:commentId)
+     */
+    private void deleteComment(Context ctx) {
+        Long bookId = ctx.queryParamAsClass("bookId", Long.class).getOrDefault(null);
+        Long commentId = ctx.pathParamAsClass("commentId", Long.class).getOrDefault(null);
+
+        if (bookId == null || commentId == null) {
+            ctx.status(400).result("bookId and commentId required");
             return;
         }
 
-        commentRepo.add(bookId, author.trim(), text.trim());
-        ctx.redirect("/comments?bookId=" + bookId);
-    }
-
-    private void deleteComment(Context ctx) {
-        long bookId = ctx.formParamAsClass("bookId", Long.class).get();
-        long commentId = ctx.formParamAsClass("commentId", Long.class).get();
         commentRepo.delete(bookId, commentId);
-        ctx.redirect("/comments?bookId=" + bookId);
+        ctx.status(200).json(Map.of("status", "deleted"));
     }
 }
