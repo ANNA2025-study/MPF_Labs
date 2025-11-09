@@ -1,36 +1,25 @@
 package sumdu.edu.ua.web;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import sumdu.edu.ua.core.domain.Book;
+import io.javalin.Javalin;
+import io.javalin.http.Context;
 import sumdu.edu.ua.core.domain.PageRequest;
 import sumdu.edu.ua.core.port.CatalogRepositoryPort;
 
-import java.util.List;
+import java.util.Map;
 
-@Controller
-@RequestMapping("/books")
 public class BooksController {
-
     private final CatalogRepositoryPort bookRepo;
 
     public BooksController(CatalogRepositoryPort bookRepo) {
         this.bookRepo = bookRepo;
     }
 
-    @GetMapping
-    public String getAllBooks(Model model) {
-        List<Book> books = bookRepo.search(null, new PageRequest(0, 20)).getItems();
-        model.addAttribute("books", books);
-        return "books";
+    public void registerRoutes(Javalin app) {
+        app.get("/books", this::listBooks);
     }
 
-
-    @GetMapping("books/{id}")
-    public String getBook(@PathVariable long id, Model model) {
-        Book book = bookRepo.findById(id);
-        model.addAttribute("book", book);
-        return "book-comments";
+    private void listBooks(Context ctx) {
+        var books = bookRepo.search("", new PageRequest(0, 100)).getItems();
+        ctx.render("books.mustache", Map.of("books", books));
     }
 }

@@ -1,18 +1,13 @@
 package sumdu.edu.ua.web;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import sumdu.edu.ua.core.domain.Comment;
+import io.javalin.Javalin;
+import io.javalin.http.Context;
 import sumdu.edu.ua.core.domain.PageRequest;
-import sumdu.edu.ua.core.port.CommentRepositoryPort;
 import sumdu.edu.ua.core.port.CatalogRepositoryPort;
+import sumdu.edu.ua.core.port.CommentRepositoryPort;
 
-import java.util.List;
+import java.util.Map;
 
-
-@Controller
-@RequestMapping("/comments")
 public class CommentsController {
 
     private final CommentRepositoryPort commentRepo;
@@ -23,34 +18,47 @@ public class CommentsController {
         this.bookRepo = bookRepo;
     }
 
-    @GetMapping
-    public String list(@RequestParam long bookId, Model model) {
-        var book = bookRepo.findById(bookId);
-        List<Comment> comments = commentRepo.list(bookId, null, null, new PageRequest(0, 20)).getItems();
+    public void registerRoutes(Javalin app) {
 
-        model.addAttribute("book", book);
-        model.addAttribute("comments", comments);
-        return "book-comments";
+        // --- список коментарів до книги ---
+        app.get("/comments", this::listComments);
+
+        // --- додати коментар ---
+        app.post("/comments", this::addComment);
+
+        // --- видалити коментар ---
+        app.post("/comments/delete", this::deleteComment);
     }
 
-    @PostMapping
-    public String add(@RequestParam long bookId,
-                      @RequestParam String author,
-                      @RequestParam String text) {
+    private void listComments(Context ctx) {
+        long bookId = ctx.queryParamAsClass("bookId", Long.class).get();
+        var book = bookRepo.findById(bookId);
+        var comments = commentRepo.list(bookId, null, null, new PageRequest(0, 20)).getItems();
 
-        if (!author.isBlank() && !text.isBlank()) {
-            commentRepo.add(bookId, author.trim(), text.trim());
+        ctx.render("book-comments.mustache", Map.of(
+                "book", book,
+                "comments", comments
+        ));
+    }
+
+    private void addComment(Context ctx) {
+        long bookId = ctx.formParamAsClass("bookId", Long.class).get();
+        String author = ctx.formParam("author");
+        String text = ctx.formParam("text");
+
+        if (author == null || text == null || author.isBlank() || text.isBlank()) {
+            ctx.status(400).result("author and text required");
+            return;
         }
 
-        return "redirect:/comments?bookId=" + bookId;
+        commentRepo.add(bookId, author.trim(), text.trim());
+        ctx.redirect("/comments?bookId=" + bookId);
     }
 
-
-    @PostMapping("/delete")
-    public String delete(@RequestParam long bookId,
-                         @RequestParam long commentId) {
+    private void deleteComment(Context ctx) {
+        long bookId = ctx.formParamAsClass("bookId", Long.class).get();
+        long commentId = ctx.formParamAsClass("commentId", Long.class).get();
         commentRepo.delete(bookId, commentId);
-        return "redirect:/comments?bookId=" + bookId;
+        ctx.redirect("/comments?bookId=" + bookId);
     }
-
 }
