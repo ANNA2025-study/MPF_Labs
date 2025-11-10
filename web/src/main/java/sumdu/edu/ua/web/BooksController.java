@@ -16,13 +16,9 @@ public class BooksController {
 
     public void registerRoutes(Javalin app) {
 
-        // --- сторінка фронтенду ---
         app.get("/books", ctx -> ctx.redirect("/books.html"));
     }
 
-    /**
-     * Повертає список книг у форматі JSON
-     */
     private void getBooks(Context ctx) {
         var books = bookRepo.search("", new PageRequest(0, 100)).getItems();
         ctx.json(books);

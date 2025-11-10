@@ -20,7 +20,6 @@ async function loadBooks() {
 
         for (const b of books) {
             const li = document.createElement('li');
-            // ❗ посилання тепер веде на book-comments.html?bookId=...
             li.innerHTML = `
                 <a href="/book-comments.html?bookId=${b.id}">
                     ${b.title} — ${b.author} (${b.pubYear})
