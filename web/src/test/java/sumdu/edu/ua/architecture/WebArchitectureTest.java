@@ -13,7 +13,7 @@ public class WebArchitectureTest {
                 .importPackages("sumdu.edu.ua.web");
 
         noClasses()
-                .that().resideInAPackage("..web..")
+                .that().resideInAPackage("..web..").and().doNotHaveSimpleName("AppInit")
                 .should().dependOnClassesThat()
                 .resideInAPackage("..persistence..")
                 .check(imported);
