@@ -1,21 +1,21 @@
 package sumdu.edu.ua.persistence.jdbc;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.Statement;
 @Component
-public final class DbInit {
+public class DbInit {
 
-    private DbInit() {}
-
-    public static void init() {
+    @PostConstruct
+    public void init() {
         try (Connection c = Db.get();
              Statement st = c.createStatement()) {
 
             // читаємо schema.sql з resources
-            try (var in = DbInit.class.getClassLoader().getResourceAsStream("schema.sql")) {
+            try (var in = getClass().getClassLoader().getResourceAsStream("schema.sql")) {
                 if (in == null) {
                     throw new IllegalStateException("schema.sql not found in resources");
                 }

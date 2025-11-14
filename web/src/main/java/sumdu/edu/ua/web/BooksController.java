@@ -23,14 +23,12 @@ public class BooksController {
     public String getAllBooks(Model model) {
         List<Book> books = bookRepo.search(null, new PageRequest(0, 20)).getItems();
         model.addAttribute("books", books);
-        return "books";
+        return "books";   // Thymeleaf template
     }
 
 
-    @GetMapping("books/{id}")
-    public String getBook(@PathVariable long id, Model model) {
-        Book book = bookRepo.findById(id);
-        model.addAttribute("book", book);
-        return "book-comments";
+    @GetMapping("/{id}")
+    public String getBookById(@PathVariable long id) {
+        return "redirect:/comments?bookId=" + id;
     }
 }
