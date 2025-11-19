@@ -31,8 +31,10 @@ public class MailService {
     public void sendNewBookEmail(Book book) {
 
         Map<String, Object> model = new HashMap<>();
+        model.put("id", book.getId());
         model.put("title", book.getTitle());
         model.put("author", book.getAuthor());
+        model.put("year", book.getPubYear());
         model.put("comments", null);
         model.put(
                 "createdAt",
