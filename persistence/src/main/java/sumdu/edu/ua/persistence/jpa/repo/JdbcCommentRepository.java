@@ -1,4 +1,4 @@
-package sumdu.edu.ua.persistence.jdbc;
+package sumdu.edu.ua.persistence.jpa.repo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
