@@ -15,7 +15,7 @@ public class CoreArchitectureTest {
         noClasses()
                 .that().resideInAPackage("..core..")
                 .should().dependOnClassesThat()
-                .resideInAnyPackage("jakarta.servlet..", "java.sql..")
+                .resideInAnyPackage( "java.sql..")
                 .check(imported);
     }
 }

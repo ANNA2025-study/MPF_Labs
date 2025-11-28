@@ -1,50 +1,48 @@
 package sumdu.edu.ua.core.domain;
 
-public class Book {
-    long id;
-    String title;
-    String author;
-    int pubYear;
+import jakarta.persistence.*;
 
-    public int getPubYear() {
-        return pubYear;
-    }
+@Entity
+@Table(name = "books")
+public class Book {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String title;
+
+    private String author;
+
+    @Column(name = "pub_year")
+    private Integer pubYear;
 
     public Book() {
+        // JPA requires empty constructor
     }
 
-    public void setPubYear(int pubYear) {
-        this.pubYear = pubYear;
-    }
-
-    public Book(Long id, String title, String author, int pubYear) {
-        this.id = id;
+    public Book(String title, String author, Integer pubYear) {
         this.title = title;
         this.author = author;
         this.pubYear = pubYear;
     }
 
-    public Long getId() {
-        return id;
-    }
+    // getters and setters
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Long getId() { return id; }
 
-    public String getTitle() {
-        return title;
-    }
+    public void setId(Long id) { this.id = id; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public String getTitle() { return title; }
 
-    public String getAuthor() {
-        return author;
-    }
+    public void setTitle(String title) { this.title = title; }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+    public String getAuthor() { return author; }
+
+    public void setAuthor(String author) { this.author = author; }
+
+    public Integer getPubYear() { return pubYear; }
+
+    public void setPubYear(Integer pubYear) { this.pubYear = pubYear; }
 }

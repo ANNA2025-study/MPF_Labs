@@ -6,51 +6,57 @@ import sumdu.edu.ua.core.domain.Comment;
 import sumdu.edu.ua.core.domain.Page;
 import sumdu.edu.ua.core.domain.PageRequest;
 import sumdu.edu.ua.core.port.CommentRepositoryPort;
-import sumdu.edu.ua.persistence.jpa.entity.CommentEntity;
-import sumdu.edu.ua.persistence.jpa.mapper.CommentEntityMapper;
+import sumdu.edu.ua.persistence.jpa.repo.BookJpaRepository;
 import sumdu.edu.ua.persistence.jpa.repo.CommentJpaRepository;
 
 import java.time.Instant;
 import java.util.List;
 
 @Repository
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class JpaCommentRepositoryAdapter implements CommentRepositoryPort {
-
     private final CommentJpaRepository repo;
-    private final CommentEntityMapper mapper;
+
+    public JpaCommentRepositoryAdapter(CommentJpaRepository repo) {
+        this.repo = repo;
+    }
+
 
     @Override
     public void add(long bookId, String author, String text) {
-        CommentEntity entity = new CommentEntity();
-        entity.setBookId(bookId);
-        entity.setAuthor(author);
-        entity.setText(text);
-        entity.setCreatedAt(Instant.now());
-        repo.save(entity);
+        Comment comment = new Comment();
+        comment.setBookId(bookId);
+        comment.setAuthor(author);
+        comment.setText(text);
+        comment.setCreatedAt(Instant.now());
+        repo.save(comment);
     }
 
     @Override
     public Page<Comment> list(long bookId, String author, Instant since, PageRequest request) {
-        var all = repo.findByBookIdOrderByCreatedAtDesc(bookId);
 
-        // TODO: можна фільтрувати за author/since, а потім робити пагінацію вручну
-        List<Comment> content = all.stream()
-                .map(mapper::toModel)
-                .toList();
+        List<Comment> all = repo.findByBookIdOrderByCreatedAtDesc(bookId);
 
-        // Поки що можна зробити примітивну пагінацію вручну
+        List<Comment> filtered = all;
+
         int from = request.getPage() * request.getSize();
-        int to = Math.min(from + request.getSize(), content.size());
-        List<Comment> pageSlice = from >= content.size() ? List.of() : content.subList(from, to);
+        int to = Math.min(from + request.getSize(), filtered.size());
+        List<Comment> content = from >= filtered.size() ? List.of() : filtered.subList(from, to);
 
-        int totalPages = (int) Math.ceil((double) content.size() / request.getSize());
+        int totalPages = (int) Math.ceil((double) filtered.size() / request.getSize());
 
-        return new Page<>(pageSlice, request.getPage(), totalPages);
+        return new Page<>(content, request, totalPages);
+
     }
 
     @Override
     public void delete(long bookId, long commentId) {
         repo.deleteById(commentId);
     }
+
+    @Override
+    public List<Comment> findByAuthor(String author) {
+        return repo.findByAuthorOrderByCreatedAtDesc(author);
+    }
+
 }

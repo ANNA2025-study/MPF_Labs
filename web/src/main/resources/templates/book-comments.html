@@ -23,7 +23,13 @@
 <!-- Список коментарів -->
 <ul th:if="${!#lists.isEmpty(comments)}">
     <li th:each="c : ${comments}">
-        <b th:text="${c.author}">Автор</b>:
+        <b>
+            <a th:href="@{/user/{name}(name=${c.author})}"
+               th:text="${c.author}">
+                Автор
+            </a>
+        </b>:
+
         <span th:text="${c.text}">Текст</span>
         <i>(<span th:text="${c.createdAt}">date</span>)</i>
 
