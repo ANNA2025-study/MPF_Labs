@@ -1,4 +1,4 @@
-package sumdu.edu.ua.web;
+package sumdu.edu.ua.web.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package sumdu.edu.ua.web;
+package sumdu.edu.ua.web.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +9,6 @@ import sumdu.edu.ua.core.domain.Book;
 import sumdu.edu.ua.core.domain.Page;
 import sumdu.edu.ua.core.domain.PageRequest;
 import sumdu.edu.ua.core.port.CatalogRepositoryPort;
-import sumdu.edu.ua.web.mail.MailService;
 
 
 @RestController

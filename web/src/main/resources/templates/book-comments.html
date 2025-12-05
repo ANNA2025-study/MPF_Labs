@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{fragments/header :: header}"></head>
-
 <body>
 
 <h1 th:text="${book.title}">Book title</h1>
@@ -44,22 +43,23 @@
 <h3 th:text="#{label.addComment}">Додати коментар</h3>
 
 <form method="post" th:action="@{/comments}">
-    <input type="hidden" name="bookId" th:value="${book.id}">
+    <input type="hidden" name="bookId" th:value="${book.id}"/>
 
-    <label>
+    <p>
         <span th:text="#{label.author}">Автор</span>:
-        <input type="text" name="author">
-    </label>
-    <br>
+        <b th:text="${currentUserNickname}">Поточний користувач</b>
+        <input type="hidden" name="author" th:value="${currentUserNickname}"/>
+    </p>
 
     <label>
         <span th:text="#{label.text}">Текст</span>:
         <textarea name="text"></textarea>
     </label>
-    <br>
+    <br/>
 
     <button type="submit" th:text="#{label.add}">Додати</button>
 </form>
+
 
 <p>
     <a th:href="@{/books}" th:text="#{label.back}">← Повернутись до списку книг</a>

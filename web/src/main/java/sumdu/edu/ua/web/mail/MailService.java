@@ -1,5 +1,6 @@
 package sumdu.edu.ua.web.mail;
 
+import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,8 +8,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import sumdu.edu.ua.core.domain.Book;
+import sumdu.edu.ua.core.port.MailPort;
 
-import jakarta.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -16,10 +17,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class MailService {
+public class MailService implements MailPort {
+
+    private static final Logger log = LoggerFactory.getLogger(MailService.class);
 
     private final JavaMailSender mailSender;
     private final EmailTemplateProcessor templateProcessor;
+
     @Value("${app.mail.admin}")
     private String adminEmail;
 
@@ -41,15 +45,12 @@ public class MailService {
                 Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())
         );
 
-
         String html = templateProcessor.processTemplate("new_book.ftl", model);
 
         sendHtml(adminEmail, "Нова книга в каталозі", html);
     }
 
-    private static final Logger log = LoggerFactory.getLogger(MailService.class);
-
-    public void sendHtml(String to, String subject, String html) {
+    private void sendHtml(String to, String subject, String html) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
 
@@ -63,10 +64,20 @@ public class MailService {
             mailSender.send(message);
 
             log.info("Email sent to {} with subject '{}'", to, subject);
-
         } catch (Exception e) {
             log.error("Failed to send email to {}", to, e);
             throw new RuntimeException("Cannot send email", e);
         }
+    }
+
+    @Override
+    public void sendVerificationEmail(String email, String token) {
+        Map<String, Object> model = new HashMap<>();
+        model.put("confirmUrl", "http://localhost:8080/confirm?token=" + token);
+        model.put("email", email);
+
+        String html = templateProcessor.processTemplate("verify.ftl", model);
+
+        sendHtml(email, "Підтвердження акаунту", html);
     }
 }

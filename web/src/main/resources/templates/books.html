@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 
 <head th:replace="~{fragments/header :: header}"></head>
-
 <body>
 
 <h1 th:text="#{title.books}">Каталог книг</h1>
@@ -19,9 +19,8 @@
         </a>
     </li>
 </ul>
-<p>
+<p sec:authorize="hasRole('MODERATOR')">
     <a th:href="@{/books/new}" th:text="#{label.addBook}">Додати книгу</a>
 </p>
-
 </body>
 </html>

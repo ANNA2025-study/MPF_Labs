@@ -1,11 +1,10 @@
-package sumdu.edu.ua.web;
+package sumdu.edu.ua.web.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import sumdu.edu.ua.core.domain.Comment;
-import sumdu.edu.ua.core.port.CatalogRepositoryPort;
 import sumdu.edu.ua.core.port.CommentRepositoryPort;
 
 import java.util.List;
