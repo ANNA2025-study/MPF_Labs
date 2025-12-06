@@ -1,5 +1,6 @@
 package sumdu.edu.ua.web.controller;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,8 +9,10 @@ import sumdu.edu.ua.core.domain.Comment;
 import sumdu.edu.ua.core.domain.PageRequest;
 import sumdu.edu.ua.core.port.CatalogRepositoryPort;
 import sumdu.edu.ua.core.port.CommentRepositoryPort;
+import sumdu.edu.ua.core.service.CommentService;
 import sumdu.edu.ua.core.service.UserService;
 
+import java.time.Instant;
 import java.util.List;
 
 @Controller
@@ -19,13 +22,16 @@ public class CommentsController {
     private final CommentRepositoryPort commentRepo;
     private final CatalogRepositoryPort bookRepo;
     private final UserService userService;
+    private final CommentService commentService;   // NEW
 
     public CommentsController(CommentRepositoryPort commentRepo,
                               CatalogRepositoryPort bookRepo,
-                              UserService userService) {
+                              UserService userService,
+                              CommentService commentService) {   // NEW
         this.commentRepo = commentRepo;
         this.bookRepo = bookRepo;
         this.userService = userService;
+        this.commentService = commentService;                      // NEW
     }
 
     // -------------------------
@@ -93,9 +99,13 @@ public class CommentsController {
     // -----------------------
     @PostMapping("/delete")
     public String delete(@RequestParam long bookId,
-                         @RequestParam long commentId) {
+                         @RequestParam long commentId,
+                         @RequestParam
+                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                         Instant createdAt) {   // NEW
 
-        commentRepo.delete(bookId, commentId);
+        // ТЕПЕР через сервіс з валідаціями + винятками
+        commentService.delete(bookId, commentId, createdAt);
 
         return "redirect:/comments?bookId=" + bookId;
     }

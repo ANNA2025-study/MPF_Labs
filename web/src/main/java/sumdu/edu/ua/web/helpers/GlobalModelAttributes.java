@@ -1,4 +1,4 @@
-package sumdu.edu.ua.web;
+package sumdu.edu.ua.web.helpers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -13,7 +13,6 @@ import sumdu.edu.ua.core.service.UserService;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @ControllerAdvice

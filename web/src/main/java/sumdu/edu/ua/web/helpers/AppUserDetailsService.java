@@ -1,4 +1,4 @@
-package sumdu.edu.ua.web;
+package sumdu.edu.ua.web.helpers;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

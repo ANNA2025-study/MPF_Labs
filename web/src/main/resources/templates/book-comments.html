@@ -32,11 +32,13 @@
         <span th:text="${c.text}">Текст</span>
         <i>(<span th:text="${c.createdAt}">date</span>)</i>
 
-        <form method="post" th:action="@{/comments/delete}" style="display:inline">
-            <input type="hidden" name="bookId" th:value="${book.id}">
-            <input type="hidden" name="commentId" th:value="${c.id}">
-            <button type="submit" th:text="#{label.delete}">Видалити</button>
+        <form th:action="@{/comments/delete}" method="post">
+            <input type="hidden" name="bookId" th:value="${book.id}" />
+            <input type="hidden" name="commentId" th:value="${c.id}" />
+            <input type="hidden" name="createdAt" th:value="${c.createdAt}" /> <!-- додали для лаб10 -->
+            <button type="submit">Видалити</button>
         </form>
+
     </li>
 </ul>
 
