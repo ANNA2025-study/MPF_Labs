@@ -18,7 +18,7 @@
         </#list>
     </ul>
 </#if>
-<a href="http://localhost:8080/comments?bookId=${id?if_exists}"
+<a href="${appBaseUrl}/comments?bookId=${id?if_exists}"
    style="background:#4CAF50;color:white;padding:10px 15px;text-decoration:none;border-radius:5px;">
     Переглянути книгу
 </a>

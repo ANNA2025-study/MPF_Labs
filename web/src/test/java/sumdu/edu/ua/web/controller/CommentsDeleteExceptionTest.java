@@ -11,7 +11,7 @@ import sumdu.edu.ua.core.port.CatalogRepositoryPort;
 import sumdu.edu.ua.core.port.CommentRepositoryPort;
 import sumdu.edu.ua.core.service.CommentService;
 import sumdu.edu.ua.core.service.UserService;
-import sumdu.edu.ua.web.AppInit; // ← твій main-клас з @SpringBootApplication
+import sumdu.edu.ua.web.AppInit;
 
 import java.time.Instant;
 
@@ -22,8 +22,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(classes = AppInit.class)
-@AutoConfigureMockMvc(addFilters = false) // щоб сек'юріті не заважала
-class CommentDeleteExceptionTest {
+@AutoConfigureMockMvc(addFilters = false)
+class CommentsDeleteExceptionTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -42,7 +42,7 @@ class CommentDeleteExceptionTest {
 
     @Test
     void delete_tooOldComment_returnsBadRequestJson() throws Exception {
-        // Мокаємо сервіс: при виклику delete(...) кидає CommentTooOldException
+
         doThrow(new CommentTooOldException(
                 "Коментар створено більше ніж 24 години тому і не може бути видалений"
         )).when(commentService)

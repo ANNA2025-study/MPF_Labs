@@ -26,6 +26,12 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
 
+                        // NEW: публічний health-check для Render / моніторингу
+                        .requestMatchers("/health").permitAll()
+
+                        // NEW: усі Actuator-ендпоінти — тільки для ADMIN
+                        .requestMatchers("/actuator/**").hasRole("ADMIN")
+
                         // статика
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
 
@@ -40,7 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/books/new").hasRole("MODERATOR")
                         .requestMatchers(HttpMethod.POST, "/books/**").hasRole("MODERATOR")
 
-                        // все інше — достатньо бути залогіненим (USER або MODERATOR)
+                        // все інше — достатньо бути залогіненим (USER або MODERATOR або ADMIN)
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

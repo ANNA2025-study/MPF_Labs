@@ -18,6 +18,8 @@ import java.util.Map;
 
 @Service
 public class MailService implements MailPort {
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     private static final Logger log = LoggerFactory.getLogger(MailService.class);
 
@@ -35,6 +37,7 @@ public class MailService implements MailPort {
     public void sendNewBookEmail(Book book) {
 
         Map<String, Object> model = new HashMap<>();
+        model.put("appBaseUrl", baseUrl);
         model.put("id", book.getId());
         model.put("title", book.getTitle());
         model.put("author", book.getAuthor());
@@ -73,7 +76,9 @@ public class MailService implements MailPort {
     @Override
     public void sendVerificationEmail(String email, String token) {
         Map<String, Object> model = new HashMap<>();
-        model.put("confirmUrl", "http://localhost:8080/confirm?token=" + token);
+
+        String confirmUrl = baseUrl + "/confirm?token=" + token;
+        model.put("confirmUrl", confirmUrl);
         model.put("email", email);
 
         String html = templateProcessor.processTemplate("verify.ftl", model);
