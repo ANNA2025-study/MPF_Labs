@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS users (
-                                     id IDENTITY PRIMARY KEY,
+                                     id integer generated always as identity primary key,
                                      username VARCHAR(64) NOT NULL UNIQUE,
     display_name VARCHAR(255)
     );
