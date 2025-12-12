@@ -16,11 +16,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 public class AppInit {
     public static void main(String[] args) {
         ConfigurableApplicationContext ctx = SpringApplication.run(AppInit.class, args);
-
-        Environment env = ctx.getEnvironment();
-        String baseUrl = env.getProperty("app.base-url");
-
-        System.out.println("Started at " + baseUrl + "/books");
     }
 }
 
