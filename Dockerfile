@@ -20,7 +20,7 @@ COPY web web
 RUN mvn -pl web -am -B package -DskipTests
 
 # ====== runtime stage ======
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
