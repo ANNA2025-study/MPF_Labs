@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ "deploy" ]
 
+permissions:
+  contents: write   # дозволяє пушити в інші гілки (у нас - render)
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -40,5 +43,39 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build with Maven
+      - name: Build & Test with Maven
         run: mvn -B clean package --file pom.xml
+       
+
+  promote-to-render:
+    needs: build
+    runs-on: ubuntu-latest
+    # Виконуємо тільки якщо:
+    # 1) це push (не pull_request)
+    # 2) job build завершилась успішно
+    if: github.event_name == 'push' && needs.build.result == 'success'
+
+    steps:
+      - name: Checkout repo with all branches
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # потрібно, щоб були всі гілки, не тільки deploy
+
+      - name: Configure Git user
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge deploy -> render (fast-forward only)
+        run: |
+          # Переходимо на гілку render
+          git checkout render
+
+          # Підтягнути останні зміни з origin (про всяк випадок)
+          git fetch origin
+
+          # Зробити fast-forward merge з deploy
+          git merge --ff-only origin/deploy
+
+          # Відправити оновлену render назад на GitHub
+          git push origin render
