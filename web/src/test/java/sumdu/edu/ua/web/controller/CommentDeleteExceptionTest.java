@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(classes = AppInit.class)
-@AutoConfigureMockMvc(addFilters = false) // щоб сек'юріті не заважала
+@AutoConfigureMockMvc(addFilters = false)
 class CommentDeleteExceptionTest {
 
     @Autowired
